@@ -1,0 +1,32 @@
+//로그인 기능
+	   @RequestMapping("/login.do")
+	   public ModelAndView login(userVO vo, HttpServletRequest request) { // 로그인 기능
+	      ModelAndView mav = new ModelAndView();
+	      System.out.println("컨트롤러임");
+	      int idCheck = muscleMapper.checkId(vo);
+	      /* int pwCheck = muscleMapper.checkPw(vo); */
+	      log.info("아이디 체크"+idCheck);
+	      if(idCheck > 0) {
+	         userVO uservo = muscleMapper.login(vo);
+	         HttpSession session = request.getSession();
+	         session.setAttribute("userVO", uservo);
+	         mav.setViewName("redirect:/test.do");
+	      } else {
+	         mav.addObject("msg", new Gson().toJson("사용자 정보가 일치하지 않습니다."));
+	         mav.setViewName("redirect:/test.do");
+	      }
+	      System.out.println(mav);
+	      // 세션을 가져올때 model을 사용하면 너무 복잡해서 그냥 이거 생성해서 세션을 가져오거나 생성해주는 조건문을 주고
+	      // model.addAttribute("uservo", uservo); // addAttribute: session
+	      return mav;
+	   }
+	 
+	 
+	
+	// 로그아웃 기능
+	@RequestMapping("/logout.do")
+	public String logout(HttpServletRequest request) { // 로그아웃 기능
+		HttpSession session = request.getSession();
+		session.invalidate();
+		return "test";
+	}

@@ -21,12 +21,10 @@
 	      return mav;
 	   }
 	 
-	 
+	// 회원가입 기능
+	@RequestMapping("/joinfunction.do")
+	public String joinfunction() {
+		return "login";
+	} 
 	
-	// 로그아웃 기능
-	@RequestMapping("/logout.do")
-	public String logout(HttpServletRequest request) { // 로그아웃 기능
-		HttpSession session = request.getSession();
-		session.invalidate();
-		return "test";
-	}
+	

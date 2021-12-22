@@ -1,0 +1,24 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd" PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN">
+
+ 
+
+-<mapper namespace="kr.co.mapper.muscleMapper">
+
+ 
+
+<!-- 패키지와 클래스를 해두기 인터페이스 이름이랑 똑같아야함 보드매퍼에서 이 네임스페이스를 통해서 찾아온다 -->
+
+-<select resultType="muscleVO" id="musclevideoAjax1">
+
+<select resultType="userVO" id="login">select * from tbl_user where id=#{id} and pw=#{pw} </select>
+
+ 
+
+<!-- 회원가입 기능 -->
+
+<insert id="joinfunction">insert into tbl_user(id, pw, name, tel)values(#{id},#{pw},#{name},#{tel}) </insert>
+
+ 

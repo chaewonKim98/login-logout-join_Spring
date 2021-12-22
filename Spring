@@ -1,0 +1,163 @@
+-Mapper.java-
+
+
+
+ 
+
+-Mapper.xml-
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.smhrd.mapper.BoardMapper"> <!-- 스프링은 여기가 중요하다잇! -->
+
+    
+
+    <select id ="boardList" resultType="boardVO">
+
+        select * from tbl_board 
+
+    </select>
+
+    
+
+    <insert id="boardInsert" parameterType="boardVO">
+
+        insert into tbl_board(title, contents, writer) values(#{title},#{contents},#{writer}) <!-- ?,?,? =>  #{},#{},#{}-->
+
+    </insert>
+
+    
+
+    <delete id="boardDelete" >
+
+     delete from tbl_board where idx = #{idx}   <!-- idx => cnt 로 해도됨 단 파라미터값이 하나일때만 -->
+
+    </delete>
+
+    <!--  
+
+    <update id="boardUpdate" >        
+
+        update tbl_board set title = #{title},contents = #{contents} where idx = #{idx}
+
+    </update>
+
+    -->
+
+</mapper>
+
+ 
+
+-Controller-
+
+//POJO
+
+@Controller
+
+public class BoardContoller { //new BoardController(); => Spring Container9DI
+
+	
+
+	//@Autowired // defendency 인젝션 = DI
+
+	@Inject //자동으로 인식
+
+	//@Resource("boardMapper")
+
+	private BoardMapper boardMapper;
+
+	//게시판 리스트를 가져오는 동작
+
+	@RequestMapping("/boardList.do") //핸들러 매핑 @
+
+	public void boardList(Model model) {
+
+		List<BoardVO> list = boardMapper.boardList(); //sessionFactory가 처리
+
+		model.addAttribute("list", list); // 객체바인딩 ->ModelAndView->Model(*)
+
+		//return "boardList"; //  -->ViewResolver-->/WEB-INF/views/boardList.jsp
+
+		//void로 주고 return을 삭제 (void를 주면 매핑 주소로 감 , 단 리다이렉트는 안됨!)
+
+	}
+
+	@RequestMapping("/boardListAjax.do")
+
+	public @ResponseBody List<BoardVO> boardListAjax() {
+
+		List<BoardVO> list = boardMapper.boardListAjax(); //sessionFactory가 처리
+
+		return list; //객체를 리턴--{JSON API}--> String 변환--> 응답
+
+	}
+
+	@RequestMapping("/boardDeleteAjax.do")
+
+	public @ResponseBody int boardDeleteAjax(int idx){
+
+		int cnt = boardMapper.boardDeleteAjax(idx);
+
+		return cnt;
+
+	}
+
+	
+
+	@RequestMapping("/boardForm.do") //핸들러 매핑 @
+
+	public void boardForm() {		
+
+		//return "boardForm"; //boardForm.jsp
+
+	}
+
+	@RequestMapping("/boardInsert.do") //핸들러 매핑 @
+
+	public String boardInsert(BoardVO vo) { //파라메터수집(자동)-> new BoardVO();
+
+		boardMapper.boardInsert(vo);
+
+		return "redirect:/boardList.do";
+
+	}
+
+	@RequestMapping("/boardContent.do")
+
+	public void boardContent(int idx, Model model) {				
+
+	    BoardVO vo = boardMapper.boardContent(idx);
+
+	    model.addAttribute("vo", vo);
+
+		//return "boardContent";    // void로 주고 return을 삭제 (void를 주면 매핑 주소로 감 , 단 리다이렉트는 안됨!)
+
+	}
+
+	@RequestMapping("/boardDelete.do")
+
+	public String boardDelete(int idx) {
+
+	  boardMapper.boardDelete(idx);	   
+
+		return "redirect:/boardList.do";
+
+	}
+
+	@RequestMapping("/boardUpdate.do")
+
+	public String boardUpdate(BoardVO vo) {
+
+		boardMapper.boardUpdate(vo);
+
+		return "redirect:/boardList.do";
+
+	}
+
+}
